@@ -6,18 +6,11 @@ import cats.effect.*
 final case class Echo(msg_id: Int, echo: String)
 given JsonValueCodec[Echo] = JsonCodecMaker.make
 
-final case class EchoOk(`type`: String, msg_id: Option[Int], in_reply_to: Int, echo: String)
+final case class EchoOk(`type`: String, msg_id: Int, in_reply_to: Int, echo: String)
 given JsonValueCodec[EchoOk] = JsonCodecMaker.make
-
-opaque type State = Unit
-object State {
-  val empty: State = ()
-}
 
 object Main extends IOApp.Simple {
   def run: IO[Unit] = Node
-    .create[IO, State, Echo, EchoOk](State.empty) { case (State.empty, src, Echo(msgId, echo)) =>
-      (State.empty, List((src, (id: Int) => EchoOk("echo_ok", id.some, msgId, echo))))
-    }
+    .stateless[IO, Echo, EchoOk] { case (src, Echo(msgId, echo)) => List((src, EchoOk("echo_ok", _, msgId, echo))) }
     .flatMap(_.run)
 }
