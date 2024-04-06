@@ -1,1 +1,1 @@
-[maelstrom](https://github.com/jepsen-io/maelstrom) challenges solutions
+[Maelstrom](https://github.com/jepsen-io/maelstrom) Challenges Solutions in Scala
